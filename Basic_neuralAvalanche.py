@@ -1,10 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.optimize import curve_fit
 
 N = 100
-connection_prob = 0.1
+connection_prob = 0.05
 weights = (0.5,2.0)
 synaptic_connections = np.zeros((N,N))
 
@@ -13,7 +11,7 @@ for i in range(N):
         if(i != j and np.random.rand() < connection_prob):
             synaptic_connections[i,j] = np.random.uniform(*weights)
         
-Threshold_value = 1.0
+Threshold_value = 1.2
 T = 100
 dt = 0.1
 num_iterations = 1000
@@ -41,30 +39,10 @@ min_size = np.min(avalanche_sizes)
 max_size = np.max(avalanche_sizes)
 num_bins = 50
 
-bins = np.logspace(np.log10(min_size), np.log10(max_size), num_bins)
-hist, _ = np.histogram(avalanche_sizes, bins=bins, density=True)
-bins_center = 0.5*(bins[1:] + bins[:-1])
-
-def power_law(x, a, alpha, lamb):
-    return a*x**(-alpha)*np.exp(-lamb*x)
-
-p0 = (np.max(hist), 1.5, 0.01)
-if(np.sum(hist)>0):
-    try:
-        popt, pcov = curve_fit(power_law, bins_center, hist, p0=p0, maxfev=5000)
-     
-        sns.set_theme(style='darkgrid')
-        plt.figure(figsize=(7,5))
-        plt.loglog(bins_center, hist, 'o', color='red', label='Data')
-        plt.loglog(bins_center, power_law(bins_center, *popt), 'b--', label=f'Power law fit\nalpha={popt[1]:.2f}')
-        plt.xscale('log')
-        plt.yscale('log')
-        plt.xlabel('Avalanche size')
-        plt.ylabel('Frequency')
-        plt.title('Avalanche size distribution')    
-        plt.show()
-        print(f"Fitted power law parameters: a = {popt[0]}, alpha = {popt[1]}")
-    except RuntimeError as e:
-        print(f"Curve fitting failed: {e}")
-else:
-    print("Not enough data to fit a power law.")
+plt.figure(figsize=(7,5))
+plt.hist(avalanche_sizes, bins=num_bins, log=True, density=True, alpha=0.5, label='Avalanche size distribution', color=(0.9,0.1,0.1))
+plt.xlabel('Avalanche sizes')
+plt.ylabel('Frequency')
+plt.title('Avalanche size distribution')
+plt.legend()
+plt.show()
