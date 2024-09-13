@@ -3,7 +3,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-from scipy.interpolate import make_interp_spline
 
 ### Parameters
 n = 500
@@ -56,18 +55,18 @@ G, s = initialize_graph(n,k)
 energy_over_time, s = run_SOC(G,s,num_iteration,k)
 
 ### Plots
-plt.figure(figsize=(7,7))
+plt.figure(figsize=(12,6))
 num_iteration, energies = zip(*energy_over_time)
-smooth_iteration = np.linspace(min(num_iteration), max(num_iteration), 1000)
-spline = make_interp_spline(num_iteration, energies)
-smooth_energies = spline(smooth_iteration)
-plt.plot(smooth_iteration, smooth_energies, color='blue')
+plt.plot(num_iteration, energies, color='blue', linestyle='-', marker='o')
 plt.xlabel('Iteration')
 plt.ylabel('Energy')
 plt.title('Energy over time in SOC avalanche mechanism')
 plt.show()
 
 plt.figure(figsize=(7,7))
-plt.hist([s[i] for i in s.keys()], bins=k, edgecolor='black', color='lightcoral', alpha=0.9)
+plt.hist([s[i] for i in s.keys()], bins=k, edgecolor='black', color='#2ca070', alpha=0.9)
+plt.xlabel('Discrete spin values')
+plt.ylabel('Time')
+plt.xticks(ticks=[0,1,2,3,4,5,6,7,8,9], labels=['a1','a2','a3','a4','a5','a6','a7','a8','a9','a10'])
 plt.title('Histogram of Spin Values After Optimization')
 plt.show()
